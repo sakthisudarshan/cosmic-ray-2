@@ -1,0 +1,70 @@
+{
+  "gate_name": "Mutation Score Gate",
+  "tool": "cosmic-ray",
+  "execution_status": "COMPLETED",
+  "total_mutants": 191,
+  "killed_mutants": 191,
+  "survived_mutants": 0,
+  "mutation_kill_rate_percent": 100.0,
+  "overall_score": 100.0,
+  "overall_score_out_of_100": 100,
+  "all_gates_passed": true,
+  "metrics": [
+    {
+      "id": "M1",
+      "classification": "Fault Detection Capability",
+      "metric": "Logic Error Sensitivity",
+      "score": 100,
+      "gate": ">= 70%",
+      "result": "PASS"
+    },
+    {
+      "id": "M2",
+      "classification": "Test Coverage Quality Validation",
+      "metric": "Test Rigor Assessment",
+      "score": 100,
+      "gate": ">= 70%",
+      "result": "PASS"
+    },
+    {
+      "id": "M3",
+      "classification": "Test Case Improvement Identification",
+      "metric": "Weak Spot Localization",
+      "score": 100,
+      "gate": "0 modules with mutation kill rate below 50%",
+      "result": "PASS"
+    },
+    {
+      "id": "M4",
+      "classification": "Edge Case Detection",
+      "metric": "Boundary Mutant Analysis",
+      "score": 100,
+      "gate": ">= 80%",
+      "result": "PASS"
+    },
+    {
+      "id": "M5",
+      "classification": "Fault Detection Capability",
+      "metric": "Change Resilience Testing",
+      "score": 100,
+      "gate": ">= 95%",
+      "result": "PASS"
+    },
+    {
+      "id": "M6",
+      "classification": "Test Coverage Quality Validation",
+      "metric": "Semantic Integrity Check",
+      "score": 100,
+      "gate": ">= 75%",
+      "result": "PASS"
+    },
+    {
+      "id": "M7",
+      "classification": "Fault Detection Capability",
+      "metric": "Mutation Kill Rate %",
+      "score": 100,
+      "gate": ">= 70%",
+      "result": "PASS"
+    }
+  ]
+}

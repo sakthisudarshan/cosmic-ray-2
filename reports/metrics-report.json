@@ -1,0 +1,112 @@
+{
+  "tool": "cosmic-ray",
+  "session_file": "session.sqlite",
+  "total_mutants": 191,
+  "killed_mutants": 191,
+  "survived_mutants": 0,
+  "incompetent_mutants": 0,
+  "mutation_kill_rate_percent": 100.0,
+  "metrics": [
+    {
+      "metric_id": "M1",
+      "classification": "Fault Detection Capability",
+      "metric": "Logic Error Sensitivity",
+      "formula": "(total jobs - surviving mutants) / total jobs",
+      "score": 100.0,
+      "gate": ">= 70%",
+      "passed": true,
+      "details": {
+        "killed": 191,
+        "survived": 0,
+        "total": 191
+      }
+    },
+    {
+      "metric_id": "M2",
+      "classification": "Test Coverage Quality Validation",
+      "metric": "Test Rigor Assessment",
+      "formula": "(total jobs - surviving mutants) / total jobs",
+      "score": 100.0,
+      "gate": ">= 70%",
+      "passed": true,
+      "details": {
+        "killed": 191,
+        "survived": 0,
+        "total": 191
+      }
+    },
+    {
+      "metric_id": "M3",
+      "classification": "Test Case Improvement Identification",
+      "metric": "Weak Spot Localization",
+      "formula": "Count(modules where kill rate < 50%); Score = MAX(0, 100 - count*15)",
+      "score": 100.0,
+      "gate": "0 modules with mutation kill rate below 50%",
+      "passed": true,
+      "details": {
+        "surviving_mutants": 0,
+        "weak_spot_module_count": 0,
+        "weak_spot_modules": {}
+      }
+    },
+    {
+      "metric_id": "M4",
+      "classification": "Edge Case Detection",
+      "metric": "Boundary Mutant Analysis",
+      "formula": "boundary mutants killed / total boundary mutants",
+      "score": 100.0,
+      "gate": ">= 80%",
+      "passed": true,
+      "details": {
+        "boundary_killed": 178,
+        "boundary_total": 178,
+        "boundary_survived": 0
+      }
+    },
+    {
+      "metric_id": "M5",
+      "classification": "Fault Detection Capability",
+      "metric": "Change Resilience Testing",
+      "formula": "(Post-Change Mutation Kill Rate / Pre-Change Mutation Kill Rate) * 100",
+      "score": 100.0,
+      "gate": ">= 95%",
+      "passed": true,
+      "details": {
+        "note": "Single-run session baseline; resilience reported as current kill rate."
+      }
+    },
+    {
+      "metric_id": "M6",
+      "classification": "Test Coverage Quality Validation",
+      "metric": "Semantic Integrity Check",
+      "formula": "killed mutations / total mutations",
+      "score": 100.0,
+      "gate": ">= 75%",
+      "passed": true,
+      "details": {
+        "killed": 191,
+        "total": 191
+      }
+    },
+    {
+      "metric_id": "M7",
+      "classification": "Fault Detection Capability",
+      "metric": "Mutation Kill Rate %",
+      "formula": "(killed_mutations / total_mutations) * 100",
+      "score": 100.0,
+      "gate": ">= 70%",
+      "passed": true,
+      "details": {
+        "killed": 191,
+        "total": 191
+      }
+    }
+  ],
+  "weak_spots": [],
+  "module_kill_rates": {
+    "order_validator.py": 100.0,
+    "calculator.py": 100.0,
+    "discount.py": 100.0
+  },
+  "all_gates_passed": true
+}
