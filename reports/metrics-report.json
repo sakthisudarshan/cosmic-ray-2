@@ -65,7 +65,7 @@
     },
     {
       "metric_id": "M5",
-      "classification": "Fault Detection Capability",
+      "classification": "Regression Testing Validation",
       "metric": "Change Resilience Testing",
       "formula": "(Post-Change Mutation Kill Rate / Pre-Change Mutation Kill Rate) * 100",
       "score": 100.0,
@@ -77,7 +77,7 @@
     },
     {
       "metric_id": "M6",
-      "classification": "Test Coverage Quality Validation",
+      "classification": "Code Logic Validation",
       "metric": "Semantic Integrity Check",
       "formula": "killed mutations / total mutations",
       "score": 100.0,
@@ -90,7 +90,7 @@
     },
     {
       "metric_id": "M7",
-      "classification": "Fault Detection Capability",
+      "classification": "Test Suite Effectiveness Evaluation",
       "metric": "Mutation Kill Rate %",
       "formula": "(killed_mutations / total_mutations) * 100",
       "score": 100.0,
@@ -104,8 +104,8 @@
   ],
   "weak_spots": [],
   "module_kill_rates": {
-    "order_validator.py": 100.0,
     "calculator.py": 100.0,
+    "order_validator.py": 100.0,
     "discount.py": 100.0
   },
   "all_gates_passed": true

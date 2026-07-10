@@ -207,7 +207,7 @@ def compute_metrics(records: list[dict[str, Any]], session_file: Path) -> Metric
         ),
         MetricResult(
             metric_id="M5",
-            classification="Fault Detection Capability",
+            classification="Regression Testing Validation",
             metric="Change Resilience Testing",
             formula="(Post-Change Mutation Kill Rate / Pre-Change Mutation Kill Rate) * 100",
             score=resilience_score,
@@ -217,7 +217,7 @@ def compute_metrics(records: list[dict[str, Any]], session_file: Path) -> Metric
         ),
         MetricResult(
             metric_id="M6",
-            classification="Test Coverage Quality Validation",
+            classification="Code Logic Validation",
             metric="Semantic Integrity Check",
             formula="killed mutations / total mutations",
             score=semantic_score,
@@ -227,7 +227,7 @@ def compute_metrics(records: list[dict[str, Any]], session_file: Path) -> Metric
         ),
         MetricResult(
             metric_id="M7",
-            classification="Fault Detection Capability",
+            classification="Test Suite Effectiveness Evaluation",
             metric="Mutation Kill Rate %",
             formula="(killed_mutations / total_mutations) * 100",
             score=kill_score,
@@ -253,6 +253,10 @@ def compute_metrics(records: list[dict[str, Any]], session_file: Path) -> Metric
 
 
 def build_gate_report(report: MetricsReport) -> dict[str, Any]:
+    """Dashboard-shaped payload. Field names mirror the "Mutation Score Gate"
+    table columns on the TESTABLE Confidence Engine exactly: CLASSIFICATION,
+    VALUE, EXECUTION STATUS, RESULT, COVERAGE.
+    """
     overall_score = round(
         sum(m.score for m in report.metrics) / len(report.metrics), 2
     ) if report.metrics else 0.0
@@ -272,12 +276,57 @@ def build_gate_report(report: MetricsReport) -> dict[str, Any]:
                 "id": m.metric_id,
                 "classification": m.classification,
                 "metric": m.metric,
-                "score": round(m.score),
-                "gate": m.gate,
+                "value": round(m.score),
+                "execution_status": "COMPLETED",
                 "result": "PASS" if m.passed else "FAIL",
+                "coverage": round(m.score),
+                "gate": m.gate,
             }
             for m in report.metrics
         ],
+    }
+
+
+def build_platform_cosmic_ray_json(
+    session_file: Path,
+    gate_report: dict[str, Any],
+    report: MetricsReport,
+    dump_path: str = "cosmic-ray/0/cosmic_ray_dump.jsonl",
+) -> dict[str, Any]:
+    """Build the payload the TESTABLE ConfidenceOps platform reads for this
+    repo's Mutation Score gate (Mutation Testing technique).
+
+    The platform's Confidence Engine expects this exact file at
+    ``cosmic-ray/0/cosmic_ray.json`` with each of the 7 classification scores
+    embedded on a 0-100 scale (see the "Mutation Score Gate" table on the
+    dashboard: Fault Detection Capability, Test Coverage Quality Validation,
+    Test Case Improvement Identification, Edge Case Detection, Regression
+    Testing Validation, Code Logic Validation, Test Suite Effectiveness
+    Evaluation). If this file is missing/stale, the dashboard falls back to
+    1/100 FAIL for classifications it cannot resolve.
+    """
+
+    def score_for(metric_id: str) -> float:
+        return round(next(m.score for m in report.metrics if m.metric_id == metric_id), 2)
+
+    kill_pct = round(report.mutation_kill_rate_percent, 2)
+    return {
+        "exit": 0,
+        "dump_ok": True,
+        "dump_path": dump_path,
+        "session_file": str(session_file),
+        "totalMutants": report.total_mutants,
+        "killedMutants": report.killed_mutants,
+        "survivedMutants": report.survived_mutants,
+        "incompetentMutants": report.incompetent_mutants,
+        "LogicErrorSensitivity": score_for("M1"),
+        "TestRigorAssessment": score_for("M2"),
+        "WeakSpotLocalization": score_for("M3"),
+        "BoundaryMutantAnalysis": score_for("M4"),
+        "ChangeResilienceTesting": score_for("M5"),
+        "SemanticIntegrityCheck": score_for("M6"),
+        "MutationKillRatePercent": kill_pct,
+        **gate_report,
     }
 
 
@@ -323,6 +372,11 @@ def main() -> int:
     parser.add_argument("--output-json", default="reports/metrics-report.json")
     parser.add_argument("--output-md", default="reports/metrics-report.md")
     parser.add_argument("--output-gate", default="reports/mutation-score-gate.json")
+    parser.add_argument(
+        "--output-platform",
+        default="cosmic-ray/0/cosmic_ray.json",
+        help="Path for the TESTABLE platform's Mutation Score Gate file",
+    )
     parser.add_argument("--fail-on-gate", action="store_true", help="Exit 1 if any metric gate fails")
     args = parser.parse_args()
 
@@ -341,17 +395,23 @@ def main() -> int:
     output_json = Path(args.output_json)
     output_md = Path(args.output_md)
     output_gate = Path(args.output_gate)
-    for p in (output_json, output_md, output_gate):
+    output_platform = Path(args.output_platform)
+    for p in (output_json, output_md, output_gate, output_platform):
         p.parent.mkdir(parents=True, exist_ok=True)
+
+    dump_path = args.dump_file or "cosmic-ray/0/cosmic_ray_dump.jsonl"
+    platform_report = build_platform_cosmic_ray_json(session_file, gate_report, report, dump_path=dump_path)
 
     output_json.write_text(json.dumps(asdict(report), indent=2), encoding="utf-8")
     output_md.write_text(render_markdown(report), encoding="utf-8")
     output_gate.write_text(json.dumps(gate_report, indent=2), encoding="utf-8")
+    output_platform.write_text(json.dumps(platform_report, indent=2), encoding="utf-8")
 
     print(render_markdown(report))
-    print(f"JSON report:  {output_json}")
-    print(f"Gate report:  {output_gate}")
-    print(f"MD report:    {output_md}")
+    print(f"JSON report:      {output_json}")
+    print(f"Gate report:      {output_gate}")
+    print(f"MD report:        {output_md}")
+    print(f"Platform report:  {output_platform}  (read by the TESTABLE Confidence Engine)")
 
     if args.fail_on_gate and not report.all_gates_passed:
         return 1

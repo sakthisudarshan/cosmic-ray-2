@@ -27,20 +27,37 @@ archived at
 
 ## The 7 Metrics Verified Here
 
+These 7 rows match the **Mutation Score Gate** classifications shown on the
+TESTABLE ConfidenceOps dashboard exactly:
+
 | ID | Classification | Metric | Gate | Current Score |
 |----|-----------------|--------|------|----------------|
 | M1 | Fault Detection Capability | Logic Error Sensitivity | ≥ 70% | **100/100** |
 | M2 | Test Coverage Quality Validation | Test Rigor Assessment | ≥ 70% | **100/100** |
 | M3 | Test Case Improvement Identification | Weak Spot Localization | 0 weak modules | **100/100** |
 | M4 | Edge Case Detection | Boundary Mutant Analysis | ≥ 80% | **100/100** |
-| M5 | Fault Detection Capability | Change Resilience Testing | ≥ 95% | **100/100** |
-| M6 | Test Coverage Quality Validation | Semantic Integrity Check | ≥ 75% | **100/100** |
-| M7 | Fault Detection Capability | Mutation Kill Rate % | ≥ 70% | **100/100** |
+| M5 | Regression Testing Validation | Change Resilience Testing | ≥ 95% | **100/100** |
+| M6 | Code Logic Validation | Semantic Integrity Check | ≥ 75% | **100/100** |
+| M7 | Test Suite Effectiveness Evaluation | Mutation Kill Rate % | ≥ 70% | **100/100** |
 
 `scripts/metrics_reporter.py` computes all 7 rows from a cosmic-ray session
 and writes them to `reports/mutation-score-gate.json` /
 `reports/metrics-report.md`, so scores can be checked independently of this
 README at any time.
+
+### TESTABLE Platform Integration
+
+`scripts/export_testable_cosmic_ray.py` additionally writes
+**`cosmic-ray/0/cosmic_ray.json`** — the exact file the TESTABLE Confidence
+Engine reads to populate the "Mutation Score Gate" table on the dashboard
+(`classification` / `value` / `execution_status` / `result` / `coverage` per
+row, plus the raw `LogicErrorSensitivity`, `TestRigorAssessment`,
+`WeakSpotLocalization`, `BoundaryMutantAnalysis`, `ChangeResilienceTesting`,
+`SemanticIntegrityCheck`, `MutationKillRatePercent` fields). **If this file
+is missing or stale, the dashboard falls back to `1/100 FAIL` for
+classifications it can't resolve** — so always re-run
+`scripts/run_mutation_testing.ps1`/`.sh` (which calls this export step) and
+commit the refreshed `cosmic-ray/0/cosmic_ray.json` after any code change.
 
 ## Why It Hits 100/100
 
@@ -94,6 +111,7 @@ cosmic-ray exec cosmic-ray.toml session.sqlite
 cr-rate session.sqlite
 cr-report session.sqlite --surviving-only
 python scripts/metrics_reporter.py --session session.sqlite --fail-on-gate
+python scripts/export_testable_cosmic_ray.py --fail-on-gate
 ```
 
 ## Output
@@ -115,11 +133,13 @@ src/testable_demo/     # Code under test (calculator, discount, order validator)
 tests/                  # Pytest suite designed for a 100% mutation kill rate
 cosmic-ray.toml         # Cosmic Ray configuration
 scripts/
-  metrics_reporter.py   # Maps a cosmic-ray session -> the 7 TESTABLE metrics
+  metrics_reporter.py            # Maps a cosmic-ray session -> the 7 TESTABLE metrics
+  export_testable_cosmic_ray.py  # Writes cosmic-ray/0/cosmic_ray.json (platform gate file)
   run_mutation_testing.ps1 / .sh
 docs/
   metrics-mapping.md                          # Row-by-row formula reference
   Testable_Strategy_Metrics_Mapping_v0.2.xlsx  # Source workbook
+cosmic-ray/0/cosmic_ray.json                   # TESTABLE Confidence Engine reads this file
 .github/workflows/mutation-testing.yml         # CI: reruns everything on every push/PR
 ```
 

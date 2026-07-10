@@ -15,9 +15,9 @@
 | M2 | Test Coverage Quality Validation | Test Rigor Assessment | 100.00 | >= 70% | PASS |
 | M3 | Test Case Improvement Identification | Weak Spot Localization | 100.00 | 0 modules with mutation kill rate below 50% | PASS |
 | M4 | Edge Case Detection | Boundary Mutant Analysis | 100.00 | >= 80% | PASS |
-| M5 | Fault Detection Capability | Change Resilience Testing | 100.00 | >= 95% | PASS |
-| M6 | Test Coverage Quality Validation | Semantic Integrity Check | 100.00 | >= 75% | PASS |
-| M7 | Fault Detection Capability | Mutation Kill Rate % | 100.00 | >= 70% | PASS |
+| M5 | Regression Testing Validation | Change Resilience Testing | 100.00 | >= 95% | PASS |
+| M6 | Code Logic Validation | Semantic Integrity Check | 100.00 | >= 75% | PASS |
+| M7 | Test Suite Effectiveness Evaluation | Mutation Kill Rate % | 100.00 | >= 70% | PASS |
 
 ## Module Kill Rates
 

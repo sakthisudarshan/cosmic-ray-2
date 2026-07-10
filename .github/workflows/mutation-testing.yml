@@ -48,6 +48,9 @@ jobs:
       - name: Generate TESTABLE metrics report (fails build on any gate miss)
         run: python scripts/metrics_reporter.py --session session.sqlite --fail-on-gate
 
+      - name: Export TESTABLE platform gate file (cosmic-ray/0/cosmic_ray.json)
+        run: python scripts/export_testable_cosmic_ray.py --fail-on-gate
+
       - name: Upload metrics artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -57,4 +60,6 @@ jobs:
             reports/metrics-report.json
             reports/metrics-report.md
             reports/mutation-score-gate.json
+            cosmic-ray/0/cosmic_ray.json
+            cosmic-ray/0/cosmic_ray_dump.jsonl
           retention-days: 30
