@@ -10,3 +10,4 @@ session.sqlite
 session.sqlite-journal
 .venv/
 venv/
+.commit_msg.txt
